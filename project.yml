@@ -1,0 +1,38 @@
+--- 
+ - hosts: dev 
+   user: jenkins
+   become: yes 
+ 
+   tasks: 
+     - name: installation of '{{abc}}' 
+       yum: 
+         name: '{{abc}}' 
+         state: present 
+         update_cache: yes 
+       vars: 
+         abc: 
+           - git
+           - maven
+           - docker
+
+     - name: start docker
+       service:
+         name: docker
+         state: started
+         enabled: yes
+
+     - name: gather code 
+       git: 
+         repo: https://github.com/AbdulAfsar/dicet_tv.git
+         dest: /root/projectZ
+
+     - name: Build the project 
+       shell: mvn clean package -f/root/projectZ/pom.xml
+
+     - name: build an docker image from dockerfile
+       command: docker build -t tomcat /root/projectZ/
+
+     - name: build a container by using docker image
+       command: docker run -t -d -p 8081:8080 --name cont1 tomcat
+
+
