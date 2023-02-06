@@ -1,6 +1,6 @@
 --- 
  - hosts: dev 
-   user: jenkins
+   user: localhost
    become: yes 
  
    tasks: 
